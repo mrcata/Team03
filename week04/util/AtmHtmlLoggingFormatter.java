@@ -1,0 +1,98 @@
+package week04.util;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+
+/**
+ * Implements an HTML formatter used by a log handler.
+ * 
+ * There are three phases:
+ * Creation where the initial log header is created.
+ * Writing a log event which occurs multiple times
+ * Closing a logger which allows the formatter to finish the log.
+ * 
+ * @author Scott LaChance
+ */
+public class AtmHtmlLoggingFormatter extends Formatter
+{
+	// this method is called for every log records
+	public String format(LogRecord rec)
+	{
+		StringBuffer buf = new StringBuffer(1000);
+		buf.append("<tr>");
+
+		// highlight any levels >= WARNING in red
+		if(rec.getLevel().intValue() >= Level.WARNING.intValue())
+		{
+			buf.append("<td style=\"color:red\">");
+			buf.append("<b>");
+			buf.append(rec.getLevel());
+			buf.append("</b>");
+		}
+		else
+		{
+			buf.append("\t<td>");
+			buf.append(rec.getLevel());
+		}
+
+		String msg = formatMessage(rec);
+		System.out.println(msg);
+		buf.append("</td>\n");
+		buf.append("\t<td>");
+		buf.append(calcDate(rec.getMillis()));
+		buf.append("</td>\n");
+		buf.append("\t<td>");
+		buf.append(rec.getLoggerName());
+		buf.append("</td>\n");
+		buf.append("\t<td>");
+		buf.append(formatMessage(rec));
+		buf.append("</td>\n");
+		buf.append("</tr>\n");
+
+		return buf.toString();
+	}
+
+	private String calcDate(long millisecs)
+	{
+		SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+		Date resultdate = new Date(millisecs);
+		return date_format.format(resultdate);
+	}
+
+	/** 
+	 * Called by the handler just after it is created to initialize the formatter
+	 */
+	public String getHead(Handler h)
+	{
+		return "<html>" 
+		+ "<head>"
+		+ "<style type='text/css'>"
+		+ "table { width: 100% }\n"
+		+ "th { font:bold 10pt Tahoma; }\n"
+		+ "td { font:normal 10pt Tahoma; }\n"
+		+ "h1 {font:normal 11pt Tahoma;}\n"
+		+ "</style>\n"
+		+ "</head>\n"
+		+ "<body>\n"
+		+ "<h1>" + (new Date()) 
+		+ "</h1>\n"
+		+ "<table border=\"0\" cellpadding=\"5\" cellspacing=\"3\">\n"
+		+ "<tr align=\"left\">\n"
+		+ "\t<th style=\"width:10%\">Loglevel</th>\n"
+		+ "\t<th style=\"width:15%\">Time</th>\n"
+		+ "\t<th style=\"width:15%\">Source</th>\n"
+		+ "\t<th style=\"width:75%\">Log Message</th>\n"
+		+ "</tr>\n";
+	}
+
+	// this method is called just after the handler using this
+	// formatter is closed
+	public String getTail(Handler h)
+	{
+		return "</table>\n</body>\n</html>";
+	}
+}
