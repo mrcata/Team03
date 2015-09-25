@@ -1,6 +1,6 @@
 package week04.data;
 
-import week03.AtmException;
+import week04.AtmException;
 
 /**
  * Data Access Exception class

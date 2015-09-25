@@ -1,4 +1,4 @@
-package week03.data;
+package week04.data;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import week03.app.User;
+import week04.app.Account;
+import week04.app.User;
 
 public class DataAccess {
 
@@ -317,6 +318,21 @@ public class DataAccess {
 		}
 
 		return deletedUser;
+	}
+
+	public List<Account> getAccounts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Account saveAccount(Account newAccount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void removeAccount(Account addedAccount) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
