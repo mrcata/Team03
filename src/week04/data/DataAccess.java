@@ -34,6 +34,9 @@ public class DataAccess {
 	private String m_CONN_FMT = "jdbc:mysql://localhost:3306/atm?user=%s&password=%s";
 
 	private Connection m_connect = null;
+	
+	// User templates
+	
 	private PreparedStatement m_selectUserStatement;
 	private String INSERT_USER_SQL = "INSERT INTO atm.user (first_name, last_name, last_update) VALUES ('%s', '%s', '%s' )";
 	private String SELECT_USER_SQL = "SELECT id, first_name, last_name from atm.user";
@@ -44,6 +47,7 @@ public class DataAccess {
 
 	// account templates
 
+	private PreparedStatement m_selectAccountStatement;
 	private String INSERT_ACCOUNT_SQL = "INSERT INTO atm.account (user_id,name,balance,last_update) values (%d,'%s', %f,'%s')";
 	private String UPDATE_ACCOUNT_SQL = "UPDATE atm.account SET user_id=%d, name='%s',balance=%f,last_update='%s' WHERE id=%d";
 	private String SELECT_ACCOUNT_SQL = "SELECT id, user_id, name, balance from atm.account WHERE id=%d";
@@ -106,6 +110,7 @@ public class DataAccess {
 			// setup the connection with the DB
 			m_connect = DriverManager.getConnection(m_connectionString);
 			m_selectUserStatement = m_connect.prepareStatement(SELECT_USER_SQL);
+			m_selectAccountStatement = m_connect.prepareStatement(SELECT_ALL_ACCOUNTS_SQL);
 
 		} catch (SQLException ex) {
 			// Log exception
@@ -321,19 +326,147 @@ public class DataAccess {
 		return deletedUser;
 	}
 
-	public List<Account> getAccounts() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Account> getAccounts() throws AtmDataException {
+		List<Account> accountList = new ArrayList<Account>();
+		ResultSet resultSet = null;
+
+		try {
+			resultSet = m_selectAccountStatement.executeQuery();
+
+			while (resultSet.next()) {
+				long id = resultSet.getLong("id");
+				User user = getUserById(resultSet.getLong("user_id"));
+				String name = resultSet.getString("name");
+				double balance = resultSet.getDouble("balance");
+				
+				accountList.add(new Account(id, user, name, balance));
+			}
+		} catch (SQLException ex) {
+			// log error
+			throw new AtmDataException(ex);
+		}
+
+		return accountList;
+	}
+	
+	public Account getAccountByID(long id) throws AtmDataException{
+		Account foundAccount = null;
+		Statement selectStmt = null;
+
+		// prepare the sql
+		String sql = String.format(SELECT_ACCOUNT_SQL, id);
+
+		try {
+			Connection conn = getOpenConnection();
+			selectStmt = conn.createStatement();
+			ResultSet rs = selectStmt.executeQuery(sql);
+
+			while (rs.next()) {
+				foundAccount = new Account(rs.getInt(1), getUserById(rs.getInt(2)), rs.getString(3), rs.getDouble(4));
+			}
+
+		} catch (SQLException ex) {
+			throw new AtmDataException("Error retrieving Account by ID - " + ex.getMessage(), ex);
+		}
+		return foundAccount;
 	}
 
-	public Account saveAccount(Account newAccount) {
-		// TODO Auto-generated method stub
-		return null;
+	public Account saveAccount(Account account) throws AtmDataException {
+		Account returnedAccount = null;
+
+		if (account.getAccountId() == -1) {
+			returnedAccount = insertAccount(account);
+		} else {
+			returnedAccount = updateAccount(account);
+		}
+
+		return returnedAccount;
 	}
 
-	public void removeAccount(Account addedAccount) {
-		// TODO Auto-generated method stub
+	/**
+	 * Update a account set of data
+	 * 
+	 * @param account
+	 *            account to update
+	 * @throws AtmDataException
+	 */
+	private Account updateAccount(Account account) throws AtmDataException {
+		Statement updateStmt = null;
+		String updateTime = m_formatter.format(new java.util.Date());
+		String sql = String.format(UPDATE_ACCOUNT_SQL, account.getUser().getUserId(), account.getName(), account.getBalance(), updateTime,
+				account.getAccountId());
 
+		try {
+			if (!m_connect.isClosed()) {
+				updateStmt = m_connect.createStatement();
+				updateStmt.execute(sql);
+			}
+		} catch (SQLException ex) {
+			throw new AtmDataException("Error updating account - " + ex.getMessage(), ex);
+		}
+
+		return account;
+	}
+
+	/**
+	 * Insert a new Account
+	 * 
+	 * @param account
+	 *            the Account reference to add
+	 * @return updated Account reference with new ID
+	 */
+	private Account insertAccount(Account account) throws AtmDataException {
+		Account newAccount = null;
+		Statement insertStmt = null;
+		Statement lastIndex = null;
+
+		String updateTime = m_formatter.format(new java.util.Date());
+		String sql = String.format(INSERT_ACCOUNT_SQL, account.getUser().getUserId(),account.getName(), account.getBalance(),updateTime);
+
+		try {
+			if (!m_connect.isClosed()) {
+				insertStmt = m_connect.createStatement();
+				insertStmt.execute(sql);
+
+				// Successful insert
+				lastIndex = m_connect.createStatement();
+
+				// get the newly created ID
+				ResultSet rs = lastIndex.executeQuery(LAST_INSERT_ID);
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					newAccount = getAccountByID(id);
+				}
+
+			}
+		} catch (SQLException ex) {
+			throw new AtmDataException(ex);
+		}
+
+		return newAccount;
+	}
+
+	public Account removeAccount(Account account) throws AtmDataException {
+		Account accountExists = getAccountByID(account.getAccountId());
+		Account deletedAccount = null;
+		Statement deleteStatement = null;
+
+		if (accountExists != null) {
+			String sql = String.format(DELETE_ACCOUNT_BY_ID_SQL, accountExists.getAccountId());
+
+			try {
+				if (!m_connect.isClosed()) {
+					deleteStatement = m_connect.createStatement();
+					if (deleteStatement.execute(sql)) {
+						deletedAccount = accountExists;
+					}
+				}
+			} catch (SQLException e) {
+				throw new AtmDataException("Error removing account;", e);
+			}
+		}
+
+		return deletedAccount;
 	}
 
 }
