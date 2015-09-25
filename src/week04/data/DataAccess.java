@@ -14,7 +14,11 @@ import java.util.List;
 
 import week04.app.Account;
 import week04.app.User;
-
+/**
+ * 
+ * @author Anish
+ *
+ */
 public class DataAccess {
 
 	/** DataAccess reference */
@@ -37,6 +41,14 @@ public class DataAccess {
 	private String DELETE_USER_BY_ID = "Delete from atm.user WHERE id=%d";
 	private String SELECT_USER_SQL_FMT = "SELECT id, first_name, last_name from atm.user WHERE id=%d";
 	private String UPDATE_USER_SQL = "UPDATE atm.user SET first_name='%s', last_name='%s', last_update='%s' WHERE id='%d'";
+
+	// account templates
+
+	private String INSERT_ACCOUNT_SQL = "INSERT INTO atm.account (user_id,name,balance,last_update) values (%d,'%s', %f,'%s')";
+	private String UPDATE_ACCOUNT_SQL = "UPDATE atm.account SET user_id=%d, name='%s',balance=%f,last_update='%s' WHERE id=%d";
+	private String SELECT_ACCOUNT_SQL = "SELECT id, user_id, name, balance from atm.account WHERE id=%d";
+	private String SELECT_ALL_ACCOUNTS_SQL = "SELECT id, user_id, name, balance from atm.account";
+	private String DELETE_ACCOUNT_BY_ID_SQL = "DELETE from atm.account WHERE id=%d";
 
 	/**
 	 * Private parametrized constructor
@@ -74,8 +86,7 @@ public class DataAccess {
 	 * @return
 	 * @throws AtmDataException
 	 */
-	public static DataAccess getInstance(String user, String password)
-			throws AtmDataException {
+	public static DataAccess getInstance(String user, String password) throws AtmDataException {
 		if (m_data == null) {
 			m_data = new DataAccess(user, password);
 		}
@@ -145,8 +156,8 @@ public class DataAccess {
 	private User updateUser(User user) throws AtmDataException {
 		Statement updateStmt = null;
 		String updateTime = m_formatter.format(new java.util.Date());
-		String sql = String.format(UPDATE_USER_SQL, user.getFirstName(),
-				user.getLastName(), updateTime, user.getUserId());
+		String sql = String.format(UPDATE_USER_SQL, user.getFirstName(), user.getLastName(), updateTime,
+				user.getUserId());
 
 		try {
 			if (!m_connect.isClosed()) {
@@ -154,8 +165,7 @@ public class DataAccess {
 				updateStmt.execute(sql);
 			}
 		} catch (SQLException ex) {
-			throw new AtmDataException("Error updating user - "
-					+ ex.getMessage(), ex);
+			throw new AtmDataException("Error updating user - " + ex.getMessage(), ex);
 		}
 
 		return user;
@@ -174,8 +184,7 @@ public class DataAccess {
 		Statement lastIndex = null;
 
 		String updateTime = m_formatter.format(new java.util.Date());
-		String sql = String.format(INSERT_USER_SQL, user.getFirstName(),
-				user.getLastName(), updateTime);
+		String sql = String.format(INSERT_USER_SQL, user.getFirstName(), user.getLastName(), updateTime);
 
 		try {
 			if (!m_connect.isClosed()) {
@@ -220,13 +229,11 @@ public class DataAccess {
 			ResultSet rs = selectStmt.executeQuery(sql);
 
 			while (rs.next()) {
-				foundUser = new User(rs.getInt(1), rs.getString(2),
-						rs.getString(3));
+				foundUser = new User(rs.getInt(1), rs.getString(2), rs.getString(3));
 			}
 
 		} catch (SQLException ex) {
-			throw new AtmDataException("Error retrieving user by ID - "
-					+ ex.getMessage(), ex);
+			throw new AtmDataException("Error retrieving user by ID - " + ex.getMessage(), ex);
 		}
 		return foundUser;
 	}
@@ -241,8 +248,7 @@ public class DataAccess {
 	private Connection getOpenConnection() throws AtmDataException {
 		try {
 			if (m_connect == null || m_connect.isClosed()) {
-				String msg = m_connect == null ? "Connection is invalid (null)"
-						: "Connection is closed";
+				String msg = m_connect == null ? "Connection is invalid (null)" : "Connection is closed";
 				throw new AtmDataException(msg);
 			}
 		} catch (SQLException e) {
@@ -261,26 +267,22 @@ public class DataAccess {
 	public List<User> getUsers() throws AtmDataException {
 		List<User> userList = new ArrayList<User>();
 		ResultSet resultSet = null;
-		
-		try
-		{
+
+		try {
 			resultSet = m_selectUserStatement.executeQuery();
 
-			while(resultSet.next())
-			{
+			while (resultSet.next()) {
 				long userId = resultSet.getLong("id");
 				String first = resultSet.getString("first_name");
-				String last =  resultSet.getString("last_name");
-				
+				String last = resultSet.getString("last_name");
+
 				userList.add(new User(userId, first, last));
 			}
-		}
-		catch(SQLException ex)
-		{
+		} catch (SQLException ex) {
 			// log error
 			throw new AtmDataException(ex);
 		}
-		
+
 		return userList;
 	}
 
@@ -302,8 +304,7 @@ public class DataAccess {
 		Statement deleteStatement = null;
 
 		if (userExists != null) {
-			String sql = String.format(DELETE_USER_BY_ID,
-					userExists.getUserId());
+			String sql = String.format(DELETE_USER_BY_ID, userExists.getUserId());
 
 			try {
 				if (!m_connect.isClosed()) {
@@ -332,7 +333,7 @@ public class DataAccess {
 
 	public void removeAccount(Account addedAccount) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
