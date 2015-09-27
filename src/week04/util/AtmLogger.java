@@ -15,6 +15,7 @@ import java.util.logging.SimpleFormatter;
  * and setup the handlers.
  * 
  * @author Group 3
+ * 	Group 3: Coleman, Freeland, McKinney, Patel, Ramkissoon, Stinson
  */
 
 public class AtmLogger {
