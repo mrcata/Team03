@@ -11,15 +11,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 import week04.app.Account;
 import week04.app.User;
+import week04.util.AtmLogger;
 /**
  * 
- * @author Anish
+ * @author Group 3
+ *
+ *	Group 3: Coleman, Freeland, McKinney, Patel, Ramkissoon, Stinson
  *
  */
 public class DataAccess {
+	
+	/** Logger reference */
+	private static final Logger logger =
+			Logger.getLogger(AtmLogger.ATM_LOGGER + "." + DataAccess.class.getName());
 
 	/** DataAccess reference */
 	private static DataAccess m_data;
@@ -55,20 +63,21 @@ public class DataAccess {
 	private String DELETE_ACCOUNT_BY_ID_SQL = "DELETE from atm.account WHERE id=%d";
 
 	/**
-	 * Private parametrized constructor
+	 * Private parameterized constructor
 	 * 
 	 * @param user
-	 *            DB username
+	 *            DB user name
 	 * @param password
 	 *            DB user password
 	 * @throws AtmDataException
 	 */
 	private DataAccess(String user, String password) throws AtmDataException {
 		m_formatter = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-
+		AtmLogger.addAtmHandler(logger);
 		m_connectionString = String.format(m_CONN_FMT, user, password);
 
 		connect();
+		logger.info("Succesfully connected to database: " + m_connectionString);
 	}
 
 	/**
@@ -180,7 +189,7 @@ public class DataAccess {
 	 * Insert a new User
 	 * 
 	 * @param user
-	 *            the User refernece to add
+	 *            the User reference to add
 	 * @return updated User reference with new ID
 	 */
 	private User insertUser(User user) throws AtmDataException {
@@ -248,7 +257,7 @@ public class DataAccess {
 	 * 
 	 * @return the open connection instance
 	 * @throws AtmDataException
-	 *             if connection is not open or doesnt exist
+	 *             if connection is not open or doesn't exist
 	 */
 	private Connection getOpenConnection() throws AtmDataException {
 		try {
@@ -303,13 +312,6 @@ public class DataAccess {
 		}
 	}
 
-	/**
-	 * Removes user
-	 *
-	 * @param user
-	 * @return
-	 * @throws AtmDataException
-	 */
 	public User removeUser(User user) throws AtmDataException {
 		User userExists = getUserById(user.getUserId());
 		User deletedUser = null;
@@ -333,12 +335,6 @@ public class DataAccess {
 		return deletedUser;
 	}
 
-	/**
-	 * Retrieves accounts
-	 *
-	 * @return
-	 * @throws AtmDataException
-	 */
 	public List<Account> getAccounts() throws AtmDataException {
 		List<Account> accountList = new ArrayList<Account>();
 		ResultSet resultSet = null;
@@ -361,14 +357,7 @@ public class DataAccess {
 
 		return accountList;
 	}
-
-	/**
-	 * Pulls account from DB
-	 *
-	 * @param id
-	 * @return
-	 * @throws AtmDataException
-	 */
+	
 	public Account getAccountByID(long id) throws AtmDataException{
 		Account foundAccount = null;
 		Statement selectStmt = null;
@@ -391,14 +380,6 @@ public class DataAccess {
 		return foundAccount;
 	}
 
-	/**
-	 * Saves account to DB
-	 *
-	 *
-	 * @param account
-	 * @return
-	 * @throws AtmDataException
-	 */
 	public Account saveAccount(Account account) throws AtmDataException {
 		Account returnedAccount = null;
 
@@ -475,12 +456,13 @@ public class DataAccess {
 	}
 
 	/**
-	 * Removes account from DB
-	 *
+	 * 
 	 * @param account
-	 * @return
+	 * 				Id of account to be deleted
+	 * @return deletedAccount
 	 * @throws AtmDataException
 	 */
+	
 	public Account removeAccount(Account account) throws AtmDataException {
 		Account accountExists = getAccountByID(account.getAccountId());
 		Account deletedAccount = null;
