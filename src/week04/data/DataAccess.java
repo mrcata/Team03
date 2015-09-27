@@ -303,6 +303,13 @@ public class DataAccess {
 		}
 	}
 
+	/**
+	 * Removes user
+	 *
+	 * @param user
+	 * @return
+	 * @throws AtmDataException
+	 */
 	public User removeUser(User user) throws AtmDataException {
 		User userExists = getUserById(user.getUserId());
 		User deletedUser = null;
@@ -326,6 +333,12 @@ public class DataAccess {
 		return deletedUser;
 	}
 
+	/**
+	 * Retrieves accounts
+	 *
+	 * @return
+	 * @throws AtmDataException
+	 */
 	public List<Account> getAccounts() throws AtmDataException {
 		List<Account> accountList = new ArrayList<Account>();
 		ResultSet resultSet = null;
@@ -348,7 +361,14 @@ public class DataAccess {
 
 		return accountList;
 	}
-	
+
+	/**
+	 * Pulls account from DB
+	 *
+	 * @param id
+	 * @return
+	 * @throws AtmDataException
+	 */
 	public Account getAccountByID(long id) throws AtmDataException{
 		Account foundAccount = null;
 		Statement selectStmt = null;
@@ -371,6 +391,13 @@ public class DataAccess {
 		return foundAccount;
 	}
 
+	/**
+	 * Saves account to DB
+	 *
+	 * @param account
+	 * @return
+	 * @throws AtmDataException
+	 */
 	public Account saveAccount(Account account) throws AtmDataException {
 		Account returnedAccount = null;
 
@@ -446,6 +473,13 @@ public class DataAccess {
 		return newAccount;
 	}
 
+	/**
+	 * Removes account from DB
+	 *
+	 * @param account
+	 * @return
+	 * @throws AtmDataException
+	 */
 	public Account removeAccount(Account account) throws AtmDataException {
 		Account accountExists = getAccountByID(account.getAccountId());
 		Account deletedAccount = null;
