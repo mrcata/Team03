@@ -18,7 +18,9 @@ import week04.app.User;
 import week04.util.AtmLogger;
 /**
  * 
- * @author Anish
+ * @author Group 3
+ *
+ *	Group 3: Coleman, Freeland, McKinney, Patel, Ramkissoon, Stinson
  *
  */
 public class DataAccess {
@@ -61,10 +63,10 @@ public class DataAccess {
 	private String DELETE_ACCOUNT_BY_ID_SQL = "DELETE from atm.account WHERE id=%d";
 
 	/**
-	 * Private parametrized constructor
+	 * Private parameterized constructor
 	 * 
 	 * @param user
-	 *            DB username
+	 *            DB user name
 	 * @param password
 	 *            DB user password
 	 * @throws AtmDataException
@@ -187,7 +189,7 @@ public class DataAccess {
 	 * Insert a new User
 	 * 
 	 * @param user
-	 *            the User refernece to add
+	 *            the User reference to add
 	 * @return updated User reference with new ID
 	 */
 	private User insertUser(User user) throws AtmDataException {
@@ -255,7 +257,7 @@ public class DataAccess {
 	 * 
 	 * @return the open connection instance
 	 * @throws AtmDataException
-	 *             if connection is not open or doesnt exist
+	 *             if connection is not open or doesn't exist
 	 */
 	private Connection getOpenConnection() throws AtmDataException {
 		try {
@@ -453,6 +455,14 @@ public class DataAccess {
 		return newAccount;
 	}
 
+	/**
+	 * 
+	 * @param account
+	 * 				Id of account to be deleted
+	 * @return deletedAccount
+	 * @throws AtmDataException
+	 */
+	
 	public Account removeAccount(Account account) throws AtmDataException {
 		Account accountExists = getAccountByID(account.getAccountId());
 		Account deletedAccount = null;
