@@ -1,14 +1,18 @@
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.data.DataAccess <init>
+INFO: Succesfully connected to database: jdbc:mysql://localhost:3306/atm?user=root&password=root
+Sep 26, 2015 11:07:07 PM week04.data.DataAccess <init>
+INFO: Succesfully connected to database: jdbc:mysql://localhost:3306/atm?user=root&password=root
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 SEVERE: SEVERE Level: Severe Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 SEVERE: INFO Level: Severe Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 WARNING: INFO Level: Warning Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 INFO: INFO Level: Info Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 SEVERE: FINE Level: Severe Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 WARNING: FINE Level: Warning Log
-Sep 26, 2015 2:55:05 PM week04.TestLogging testLogger
+Sep 26, 2015 11:07:07 PM week04.TestLogging testLogger
 INFO: FINE Level: Info Log

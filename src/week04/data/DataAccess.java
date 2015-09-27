@@ -11,15 +11,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Logger;
 
 import week04.app.Account;
 import week04.app.User;
+import week04.util.AtmLogger;
 /**
  * 
  * @author Anish
  *
  */
 public class DataAccess {
+	
+	/** Logger reference */
+	private static final Logger logger =
+			Logger.getLogger(AtmLogger.ATM_LOGGER + "." + DataAccess.class.getName());
 
 	/** DataAccess reference */
 	private static DataAccess m_data;
@@ -65,10 +71,11 @@ public class DataAccess {
 	 */
 	private DataAccess(String user, String password) throws AtmDataException {
 		m_formatter = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
-
+		AtmLogger.addAtmHandler(logger);
 		m_connectionString = String.format(m_CONN_FMT, user, password);
 
 		connect();
+		logger.info("Succesfully connected to database: " + m_connectionString);
 	}
 
 	/**
